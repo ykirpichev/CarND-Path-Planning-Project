@@ -1,6 +1,96 @@
 # CarND-Path-Planning-Project
 Self-Driving Car Engineer Nanodegree Program
-   
+
+## The rubric points
+### The code compiles correctly
+
+I updated CMakeLists.txt in the following way:
+```
+-set(sources src/main.cpp)
++set(sources src/main.cpp src/car.cpp src/car.h src/helper.cpp)
+```
+in order to add new files.
+
+Also, I moved utility functions to separate file `helper.cpp` in order to make code in `main.cpp` more straighforward.
+
+### The car is able to drive at least 4.32 miles without incident
+
+Here is a screenshot showing that the car was able to drive more than 4.32 miles without incident.
+I mostly followed advices from project walkthrough and, I think, that algorithm is still not perfect, but it is good enough to satisfy rubric points.
+
+### The car drives according to the speed limit
+Speed limit is not violated when car is driving.
+
+### Max Acceleration and Jerk are not Exceeded
+Spline based approach described by project walkthrough is used in order to don't violate max acceleration and jerk.
+
+### Car does not have collisions
+Since implemented algorithm uses only end of previous trajectory, collisions are still possible if other car suddenly changes its lane to ours lane.
+But, in any case, the car was able to drive 4.32 miles without incident.
+
+### The car stays in its lane, except for the time between changing lanes
+Car stays in its lane if there is no other lane which improves car's forward progress.
+
+### The car is able to change lanes
+Yes, it can.
+
+### There is a reflection on how to generate paths
+I used approach suggested by project walkthrough video.
+Spline library was used to generate trajectory which does not violate jerk and acceleration.
+Also, path planner that performs optimized lane changing was implemented, this means that the car only changes into a lane that improves its forward progress.
+Perhaps, better approach would be to strictly follow hehaviour <-> prediction <-> trajectory pipeline, but selected approached worked for this project and satisfied all required rubric points.
+
+Let's go through main points of implemented sollution:
+1. Initialization:
+```
+   Car car(j[1]);
+```
+I implemented helper class Car which has constructor which accepts json representation of car state.
+
+2. Perform optimized lane changing:
+```
+     ref_velocity = velocities[current_lane];
+
+     int best_index = current_lane;
+     for (int i = 0; i < 3; ++i) {
+         if (i != current_lane && velocities[i] > velocities[best_index] && safeness[i]) {
+             best_index = i;
+         }
+     }
+
+     if (best_index != current_lane) {
+         // we have better speed at adjustent lane
+         if (fabs(best_index - current_lane) == 1) {
+             ref_velocity = velocities[best_index];
+             current_lane = best_index;
+         } else {
+             // better speed at first or third lane and we have to cross
+             // middle lane if it is safe
+             // if it is unsafe, then perhaps, we could try to slow down
+             ref_velocity = min(ref_velocity, velocities[1]);
+             if (safeness[1]) {
+                 current_lane = 1;
+             }
+         }
+     }
+```
+3. Trajectory generation:
+```
+     auto trajectory = car.generateTrajectory(
+         current_lane,
+         ref_velocity,
+         map_waypoints_s,
+         map_waypoints_x,
+         map_waypoints_y);
+```
+Splane based algorithm exactly as it was described by walkthrough video is used under the hood of `car.generateTrajectory`.
+
+4. Possible improvements:
+ - use state machine in order to get possible state transitions
+ - for each possible state generate multiple trajectories using different anchor points
+ - use set of cost functions (check collisions, max/min velocity, acceleration, jerk for each point of trajectory) in order to choose best trajectory
+ - apply best trajectory
+
 ### Simulator.
 You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases).
 
