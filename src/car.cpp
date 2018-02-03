@@ -68,7 +68,7 @@ bool Car::isLaneSafe(int lane)
 
             check_car_s += TIME_INTERVAL * prev_size * check_speed;
             double dist_s = check_car_s - car_s;
-            if(dist_s < 30 && dist_s > -5)
+            if(dist_s < 30 && dist_s > -15)
             {
                 lane_safe = false;
                 break;
