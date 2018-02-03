@@ -16,6 +16,7 @@ Also, I moved utility functions to separate file `helper.cpp` in order to make c
 ### The car is able to drive at least 4.32 miles without incident
 
 Here is a screenshot showing that the car was able to drive more than 4.32 miles without incident.
+![](image.png)
 I mostly followed advices from project walkthrough and, I think, that algorithm is still not perfect, but it is good enough to satisfy rubric points.
 
 ### The car drives according to the speed limit
