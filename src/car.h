@@ -27,7 +27,7 @@ public:
 
     explicit Car(const std::vector<double>& sensor_fusion);
 
-    explicit Car(const nlohmann::json::basic_json& jobj);
+    explicit Car(const nlohmann::json& jobj);
 
     bool isLaneSafe(int lane);
 

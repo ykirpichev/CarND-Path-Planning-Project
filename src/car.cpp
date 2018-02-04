@@ -16,7 +16,7 @@ Car::Car(const std::vector<double>& sensor_fusion) {
     car_d = sensor_fusion[6];
 }
 
-Car::Car(const nlohmann::json::basic_json& jobj)
+Car::Car(const nlohmann::json& jobj)
 {
     car_x = jobj["x"];
     car_y = jobj["y"];
